@@ -2,45 +2,6 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FormMain {
-    public static boolean RIGHT_TO_LEFT = false;
-
-    public static void addComponentsToPane(Container pane) {
-        if (!(pane.getLayout() instanceof BorderLayout)) {
-            pane.add(new JLabel("Container doesn't use BorderLayout!"));
-            return;
-        }
-
-        if (RIGHT_TO_LEFT) {
-            pane.setComponentOrientation(
-                    java.awt.ComponentOrientation.RIGHT_TO_LEFT);
-        }
-        // BorderLayout: PAGE_START, LINE_START, CENTER, LINE_END, PAGE_END
-
-        JPanel panelData = new JPanel();
-        JComboBox cbxPerson = new JComboBox();
-        JButton btnCommit = new JButton("Commit [Exit]");
-
-        pane.add(cbxPerson, BorderLayout.PAGE_START);
-
-        panelData.setPreferredSize(new Dimension(300, 300));
-        pane.add(panelData, BorderLayout.CENTER);
-
-        pane.add(btnCommit, BorderLayout.PAGE_END);
-    }
-
-    private static void createAndShowGUI() {
-        JFrame frame = new JFrame("FormMain");
-        frame.setTitle("Первая форма Swift");
-
-        frame.setLocationByPlatform(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        addComponentsToPane(frame.getContentPane());
-
-        frame.pack();
-        frame.setVisible(true);
-    }
-
     public static void main(String[] args) {
 
         /* Use an appropriate Look and Feel */
@@ -62,19 +23,11 @@ public class FormMain {
         //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                //createAndShowGUI();
+                FormComponents formComponents = new FormComponents();
+                formComponents.createAndShowGUI();
             }
         });
-
-
-
-
-
-
-
-
-
-
     }
 
     private JPanel pnlMain;
