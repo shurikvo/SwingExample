@@ -1,16 +1,17 @@
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 public class FormComponents extends JFrame implements ItemListener {
     public boolean RIGHT_TO_LEFT = false;
 
     private JFrame frame;
-    public JPanel panelData;
+    public JPanel pnlData, pnlButtons, pnlBottom, pnlInfo;
     public JComboBox cbxPerson;
-    public JLabel lblSurName, lblName, lblPatronymic, lblBirthday;
-    public JTextField strSurname, strName, strPatronymic, strBirthday;
-    public JButton btnCommit;
+    public JLabel lblSurName, lblName, lblPatronymic, lblBirthday, lblInfo;
+    public JTextField strSurname, strName, strPatronymic, strBirthday, strInfo;
+    public JButton btnCommit, btnCancel;
 
     private void addComponentsToPane(Container pane) {
         if (!(pane.getLayout() instanceof BorderLayout)) {
@@ -24,56 +25,94 @@ public class FormComponents extends JFrame implements ItemListener {
         }
         // BorderLayout: PAGE_START, LINE_START, CENTER, LINE_END, PAGE_END
 
-        int Voff = 100;
+        int offV = 100;
         String[] strPersons = {"Alex","Iren","Nasty","Andrew","Ann","Kate"};
         cbxPerson = new JComboBox(strPersons);
+        //cbxPerson.setBounds(0,0,200,20);
         cbxPerson.addItemListener(this);
         pane.add(cbxPerson, BorderLayout.PAGE_START);
 
-        panelData = new JPanel();
-        panelData.setPreferredSize(new Dimension(300, 300));
-        panelData.setLayout(null);
-        pane.add(panelData, BorderLayout.CENTER);
+        pnlData = new JPanel();
+        pnlData.setPreferredSize(new Dimension(700, 300));
+        pnlData.setLayout(null);
+        pane.add(pnlData, BorderLayout.CENTER);
 
         lblSurName = new JLabel("Surname:", SwingConstants.RIGHT);
-        lblSurName.setBounds(10,10+Voff,70,20);
-        panelData.add(lblSurName);
+        lblSurName.setBounds(10,10+ offV,70,20);
+        pnlData.add(lblSurName);
 
         lblName = new JLabel("Name:", SwingConstants.RIGHT);
-        lblName.setBounds(10,30+Voff,70,20);
-        panelData.add(lblName);
+        lblName.setBounds(10,30+ offV,70,20);
+        pnlData.add(lblName);
 
         lblPatronymic = new JLabel("Patronymic:", SwingConstants.RIGHT);
-        lblPatronymic.setBounds(10,50+Voff,70,20);
-        panelData.add(lblPatronymic);
+        lblPatronymic.setBounds(10,50+ offV,70,20);
+        pnlData.add(lblPatronymic);
 
         lblBirthday = new JLabel("Birthday:", SwingConstants.RIGHT);
-        lblBirthday.setBounds(10,70+Voff,70,20);
-        panelData.add(lblBirthday);
+        lblBirthday.setBounds(10,70+ offV,70,20);
+        pnlData.add(lblBirthday);
 
         strSurname = new JTextField();
-        strSurname.setBounds(85,10+Voff,200,20);
-        panelData.add(strSurname);
+        strSurname.setBounds(85,10+ offV,200,20);
+        pnlData.add(strSurname);
 
         strName = new JTextField();
-        strName.setBounds(85,30+Voff,200,20);
-        panelData.add(strName);
+        strName.setBounds(85,30+ offV,200,20);
+        pnlData.add(strName);
 
         strPatronymic = new JTextField();
-        strPatronymic.setBounds(85,50+Voff,200,20);
-        panelData.add(strPatronymic);
+        strPatronymic.setBounds(85,50+ offV,200,20);
+        pnlData.add(strPatronymic);
 
         strBirthday = new JTextField();
-        strBirthday.setBounds(85,70+Voff,100,20);
-        panelData.add(strBirthday);
+        strBirthday.setBounds(85,70+ offV,100,20);
+        pnlData.add(strBirthday);
+        //------------------------------------------------------------------------------
+        pnlBottom = new JPanel();
+        BorderLayout blt = new BorderLayout();
+        pnlBottom.setLayout(blt);
+        pane.add(pnlBottom, BorderLayout.PAGE_END);
 
-        btnCommit = new JButton("Commit [Exit]");
-        pane.add(btnCommit, BorderLayout.PAGE_END);
+        //strInfo = new JTextField("");
+        //pnlBottom.add(strInfo, BorderLayout.CENTER);
+        lblInfo = new JLabel("");
+        Border blackline = BorderFactory.createLineBorder(Color.black);
+        lblInfo.setBorder(blackline);
+        pnlBottom.add(lblInfo, BorderLayout.CENTER);
+
+        pnlButtons = new JPanel();
+        pnlButtons.setLayout(null);
+        pnlButtons.setPreferredSize(new Dimension(210, 20));
+        pnlBottom.add(pnlButtons, BorderLayout.LINE_END);
+
+        int offBot = 2, wBotBut = 100, hBotBut = 20;
+
+        btnCancel = new JButton("Cancel");
+        btnCancel.setBounds(offBot,0,wBotBut,hBotBut);
+        btnCancel.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doCancel();
+            }
+        } );
+        pnlButtons.add(btnCancel);
+
+        btnCommit = new JButton("Commit");
+        btnCommit.setBounds(offBot+wBotBut+3,0,wBotBut,hBotBut);
+        btnCommit.addItemListener(this);
+        btnCommit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doCommit();
+            }
+        } );
+        pnlButtons.add(btnCommit);
+
+        showPerson();
     }
 
     public void createAndShowGUI() {
         frame = new JFrame("FormMain");
-        frame.setTitle("Первая форма Swift");
+        frame.setTitle("First Swift form");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addComponentsToPane(frame.getContentPane());
         frame.pack();
@@ -89,7 +128,14 @@ public class FormComponents extends JFrame implements ItemListener {
     }
 
     private void cbxPerson_SelectionChanhed(ItemEvent e){
+        showPerson();
+    }
+
+    private void showPerson(){
         String sItem = (String)cbxPerson.getSelectedItem();
+
+        //strInfo.setText("Selected: "+sItem);
+        lblInfo.setText("Selected: "+sItem);
 
         strSurname.setText("");
         strName.setText("");
@@ -145,5 +191,15 @@ public class FormComponents extends JFrame implements ItemListener {
         int dx = centerPoint.x - windowSize.width / 2;
         int dy = centerPoint.y - windowSize.height / 2;
         frame.setLocation(dx, dy);
+    }
+
+    private void doCommit(){
+        //strInfo.setText("Done: Commit");
+        lblInfo.setText("Done: Commit");
+    }
+
+    private void doCancel(){
+        //strInfo.setText("Done: Cancel");
+        lblInfo.setText("Done: Cancel");
     }
 }
