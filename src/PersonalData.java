@@ -54,7 +54,7 @@ public class PersonalData {
                 for (int i = 0; i < xPersons.getLength(); i++){
                     listID[i] = xPersons.item(i).getAttributes().getNamedItem("ID").getNodeValue();
                     xParams = xPersons.item(i).getChildNodes();
-                    WriteMsg("ID: " + listID[i] + ": " + xParams.getLength());
+                    WriteMsg("ID: " + listID[i] + ": ");
                     PersonalItem pit = new PersonalItem();
                     pit.setID(listID[i]);
                     for (int j = 0; j < xParams.getLength(); j++){

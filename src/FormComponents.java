@@ -4,6 +4,7 @@ import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 
 public class FormComponents extends JFrame implements ItemListener {
@@ -32,7 +33,7 @@ public class FormComponents extends JFrame implements ItemListener {
         // BorderLayout: PAGE_START, LINE_START, CENTER, LINE_END, PAGE_END
 
         int RC = 0, offV = 100;
-        strResult = new JTextArea();
+        strResult = new JTextArea("-------------------------------------------------");
         //String[] strPersons = {"Alex","Iren","Nasty","Andrew","Ann","Kate"};
 
         perda.strResult=this.strResult;
@@ -46,6 +47,10 @@ public class FormComponents extends JFrame implements ItemListener {
         cbxPerson.addItemListener(this);
         pane.add(cbxPerson, BorderLayout.PAGE_START);
 
+        strResult.setEditable(false);
+        strResult.setBackground(Color.black);
+        strResult.setForeground(Color.white);
+        strResult.setFont(new Font("Courier New",Font.PLAIN,12));
         JScrollPane scroll = new JScrollPane (strResult,
                 JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         pane.add(scroll, BorderLayout.CENTER);
