@@ -1,3 +1,6 @@
+import java.io.*;
+import java.util.*;
+
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -6,12 +9,15 @@ import java.awt.*;
 public class FormComponents extends JFrame implements ItemListener {
     public boolean RIGHT_TO_LEFT = false;
 
+    private final PersonalData perda = new PersonalData();
+
     private JFrame frame;
-    public JPanel pnlData, pnlButtons, pnlBottom, pnlInfo;
+    public JPanel pnlData, pnlButtons, pnlBottom;
     public JComboBox cbxPerson;
     public JLabel lblSurName, lblName, lblPatronymic, lblBirthday, lblInfo;
     public JTextField strSurname, strName, strPatronymic, strBirthday, strInfo;
     public JButton btnCommit, btnCancel;
+    private JTextArea strResult;
 
     private void addComponentsToPane(Container pane) {
         if (!(pane.getLayout() instanceof BorderLayout)) {
@@ -25,17 +31,29 @@ public class FormComponents extends JFrame implements ItemListener {
         }
         // BorderLayout: PAGE_START, LINE_START, CENTER, LINE_END, PAGE_END
 
-        int offV = 100;
-        String[] strPersons = {"Alex","Iren","Nasty","Andrew","Ann","Kate"};
-        cbxPerson = new JComboBox(strPersons);
+        int RC = 0, offV = 100;
+        strResult = new JTextArea();
+        //String[] strPersons = {"Alex","Iren","Nasty","Andrew","Ann","Kate"};
+
+        perda.strResult=this.strResult;
+
+        RC = perda.open("E:\\Java\\IdeaProjectsRosan\\SwingExample\\PersonalData.xml");
+        if (RC < 0)
+            cbxPerson = new JComboBox(new String[0]);
+        else
+            cbxPerson = new JComboBox(perda.getIDList());
         //cbxPerson.setBounds(0,0,200,20);
         cbxPerson.addItemListener(this);
         pane.add(cbxPerson, BorderLayout.PAGE_START);
 
+        JScrollPane scroll = new JScrollPane (strResult,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        pane.add(scroll, BorderLayout.CENTER);
+
         pnlData = new JPanel();
-        pnlData.setPreferredSize(new Dimension(700, 300));
+        pnlData.setPreferredSize(new Dimension(300, 300));
         pnlData.setLayout(null);
-        pane.add(pnlData, BorderLayout.CENTER);
+        pane.add(pnlData, BorderLayout.LINE_START);
 
         lblSurName = new JLabel("Surname:", SwingConstants.RIGHT);
         lblSurName.setBounds(10,10+ offV,70,20);
@@ -74,8 +92,6 @@ public class FormComponents extends JFrame implements ItemListener {
         pnlBottom.setLayout(blt);
         pane.add(pnlBottom, BorderLayout.PAGE_END);
 
-        //strInfo = new JTextField("");
-        //pnlBottom.add(strInfo, BorderLayout.CENTER);
         lblInfo = new JLabel("");
         Border blackline = BorderFactory.createLineBorder(Color.black);
         lblInfo.setBorder(blackline);
@@ -133,52 +149,21 @@ public class FormComponents extends JFrame implements ItemListener {
 
     private void showPerson(){
         String sItem = (String)cbxPerson.getSelectedItem();
+        Map<String, PersonalItem> mapPersons = perda.getPersonMap();
 
-        //strInfo.setText("Selected: "+sItem);
-        lblInfo.setText("Selected: "+sItem);
+        WriteMsg("Selected: " + sItem);
 
         strSurname.setText("");
         strName.setText("");
         strPatronymic.setText("");
         strBirthday.setText("");
 
-        switch(sItem){ // "Alex","Iren","Nasty","Andrew","Ann","Kate"
-            case "Alex":
-                strSurname.setText("Voroshilov");
-                strName.setText("Aleksandr");
-                strPatronymic.setText("Vladimirovich");
-                strBirthday.setText("25.06.1959");
-                break;
-            case "Iren":
-                strSurname.setText("Voroshilova (Marasina)");
-                strName.setText("Irina");
-                strPatronymic.setText("Vasilievna");
-                strBirthday.setText("13.08.1960");
-                break;
-            case "Nasty":
-                strSurname.setText("Kuznetsova (Voroshilova)");
-                strName.setText("Anastasia");
-                strPatronymic.setText("Aleksandrovna");
-                strBirthday.setText("21.11.1984");
-                break;
-            case "Andrew":
-                strSurname.setText("Voroshilov");
-                strName.setText("Andrey");
-                strPatronymic.setText("Aleksandrovich");
-                strBirthday.setText("20.07.1988");
-                break;
-            case "Ann":
-                strSurname.setText("Kuznetsova");
-                strName.setText("Anna");
-                strPatronymic.setText("Alekseevna");
-                strBirthday.setText("18.11.2013");
-                break;
-            case "Kate":
-                strSurname.setText("Kuznetsova");
-                strName.setText("Ekanerina");
-                strPatronymic.setText("Alekseevna");
-                strBirthday.setText("09.11.2016");
-                break;
+        if (mapPersons.containsKey(sItem)){
+            PersonalItem pit = mapPersons.get(sItem);
+            strSurname.setText(pit.getSurname());
+            strName.setText(pit.getName());
+            strPatronymic.setText(pit.getPatronymic());
+            strBirthday.setText(pit.getBirthday());
         }
     }
 
@@ -195,11 +180,16 @@ public class FormComponents extends JFrame implements ItemListener {
 
     private void doCommit(){
         //strInfo.setText("Done: Commit");
-        lblInfo.setText("Done: Commit");
+        WriteMsg("Done: Commit");
     }
 
     private void doCancel(){
         //strInfo.setText("Done: Cancel");
-        lblInfo.setText("Done: Cancel");
+        WriteMsg("Done: Cancel");
+    }
+
+    private void WriteMsg(String sMes){
+        lblInfo.setText(sMes);
+        strResult.setText(strResult.getText() + "\n" + sMes);
     }
 }
